@@ -5,7 +5,16 @@ dependencies:
   - python=3.12
   - pip
   - ruff
+  - pandas
+  - numpy
+  - seaborn
+  - scipy
+  - scikit-learn
+  - scikit-image
+  - ipykernel
   - pip:
     - python-dotenv
     - mkdocs
+    - xrayutilities
+    - lmfit
     - -e .
