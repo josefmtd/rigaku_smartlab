@@ -1,0 +1,11 @@
+name: rigaku_smartlab
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pip
+  - ruff
+  - pip:
+    - python-dotenv
+    - mkdocs
+    - -e .
