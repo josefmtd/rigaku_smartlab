@@ -203,9 +203,11 @@ def reciprocal_space_map(filename, verbose=False, threshold=10,
     # Configure axis ticks and limits
     ax.xaxis.set_major_locator(ticker.MaxNLocator(nbins=5))
     ax.yaxis.set_major_locator(ticker.MaxNLocator(nbins=5))
+    ax.tick_params(axis='both', which='major', labelsize=label_size)
+    ax.tick_params(axis='both', which='minor', labelsize=label_size - 2)
+
     plt.xlim(xlim if xlim else extent[0], extent[1])
     plt.ylim(ylim if ylim else (df.index.min(), df.index.max()))
-    plt.xticks(fontsize=label_size)
 
     plt.tight_layout()
     plt.show()
