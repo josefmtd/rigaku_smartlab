@@ -33,7 +33,7 @@ def custom_formatter(x, pos):
     base = x / 10**exponent
     return r'${:.1f} \times 10^{{{}}}$'.format(base, exponent)
 
-def pseudo_voigt(filename, verbose=False, plot=False,
+def pseudo_voigt(filename, normalized = False, verbose=False, plot=False,
                  label_size=20, xlim=None, ylim=None):
     """
     Fit a pseudo-Voigt function to the data in the given file.
@@ -42,6 +42,8 @@ def pseudo_voigt(filename, verbose=False, plot=False,
     ----------
     filename : str
         The path to the file containing the data to be fitted.
+    normalized : bool, optional
+        If True, normalize the intensity data. Default is False.
     verbose : bool, optional
         If True, print the fit results. Default is False.
     plot : bool, optional
@@ -65,6 +67,10 @@ def pseudo_voigt(filename, verbose=False, plot=False,
     # Extract the scan data into a DataFrame
     df = pd.DataFrame(RAS_file.scan.data)
 
+    # Rescale the intensity so that the maximum value is 1
+    if normalized:
+        df['int'] = df['int'] / df['int'].max()
+
     # Set up the pseudo-Voigt model using lmfit
     model = PseudoVoigtModel()
     parameters = model.guess(df.int, x=df.Omega)
@@ -85,8 +91,8 @@ def pseudo_voigt(filename, verbose=False, plot=False,
         ax.plot(df.Omega, df.int, 'rx', label='Data', markersize=2)
         ax.plot(df.Omega, output.best_fit, 'b-', label='Best Fit', linewidth=2)
 
-        # Format the y-axis using scientific notation
-        ax.yaxis.set_major_formatter(ticker.FuncFormatter(custom_formatter))
+        if not normalized:
+            ax.yaxis.set_major_formatter(ticker.FuncFormatter(custom_formatter))
 
         # Configure axis ticks and labels
         ax.xaxis.set_major_locator(ticker.MaxNLocator(nbins=5))
@@ -98,11 +104,15 @@ def pseudo_voigt(filename, verbose=False, plot=False,
 
         # Set axis labels
         ax.set_xlabel(r'$\mathrm{\omega\ (degrees)}$', fontsize=label_size)
-        ax.set_ylabel(r'Intensity (cps)', fontsize=label_size)
+        if normalized:
+            ax.set_ylabel(r'Normalized intensity (a.u.)', fontsize=label_size)
+            ax.set_ylim(0, 1)
+        else:
+            ax.set_ylabel(r'Intensity (cps)', fontsize=label_size)
+            ax.set_ylim(ylim if ylim else (0, df.int.max()))
 
         # Set axis limits
         ax.set_xlim(xlim if xlim else (df.Omega.min(), df.Omega.max()))
-        ax.set_ylim(ylim if ylim else (df.int.min(), df.int.max()))
 
         plt.tight_layout()
         plt.show()
