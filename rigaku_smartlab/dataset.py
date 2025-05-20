@@ -76,6 +76,18 @@ def pseudo_voigt(filename, normalized = False, verbose=False, plot=False,
     parameters = model.guess(df.int, x=df.Omega)
     output = model.fit(df.int, parameters, x=df.Omega)
 
+    # Calculate offset and azimuth angles
+    Rx = RAS_file.scan.init_mopo['Rx']
+    Ry = RAS_file.scan.init_mopo['Ry']
+    omega_x = np.deg2rad(Rx)
+    omega_y = np.deg2rad(Ry)
+    off_angle = np.rad2deg(np.arcsin(np.sqrt(np.sin(omega_x)**2 + np.sin(omega_y)**2)))
+    azimuth_angle = np.rad2deg(np.arctan2(np.sin(omega_y), np.sin(omega_x)))
+
+    if verbose:
+        print(f"Rx: {Rx:.4f}, Ry: {Ry:.4f}")
+        print(f"Offset Angle: {off_angle:.4f}, Azimuth Angle: {azimuth_angle:.4f}")
+
     # Extract fit results
     beta = output.best_values['sigma'] * 2
     omega = output.best_values['center']
