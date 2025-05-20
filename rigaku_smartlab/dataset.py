@@ -62,9 +62,6 @@ def pseudo_voigt(filename, normalized = False, verbose=False, plot=False,
     """
     # Read the data from the Rigaku RAS file
     RAS_file = xu.io.rigaku_ras.RASFile(filename)
-    RAS_file.Read()
-
-    # Extract the scan data into a DataFrame
     df = pd.DataFrame(RAS_file.scan.data)
 
     # Rescale the intensity so that the maximum value is 1
@@ -114,8 +111,14 @@ def pseudo_voigt(filename, normalized = False, verbose=False, plot=False,
         ax.tick_params(axis='both', which='major', labelsize=label_size)
         ax.tick_params(axis='both', which='minor', labelsize=label_size - 2)
 
+        # Thicken only x and y-axis lines and remove the rest of the border
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.spines['left'].set_linewidth(2)
+        ax.spines['bottom'].set_linewidth(2)
+
         # Set axis labels
-        ax.set_xlabel(r'$\mathrm{\omega\ (degrees)}$', fontsize=label_size)
+        ax.set_xlabel(r'$\mathrm{\omega\ (\degree)}$', fontsize=label_size)
         if normalized:
             ax.set_ylabel(r'Normalized intensity (a.u.)', fontsize=label_size)
             ax.set_ylim(0, 1)
@@ -218,8 +221,8 @@ def reciprocal_space_map(filename, verbose=False, threshold=10,
         cbar.ax.yaxis.set_major_locator(ticker.MaxNLocator(nbins=5))
 
     plt.axvline(x=0, color='black', linestyle='--', linewidth=1)
-    plt.xlabel(r'$\mathrm{\Delta\omega\ (degrees)}$', fontsize=label_size)
-    plt.ylabel(r'$\mathrm{2\theta/\omega\ (degrees)}$', fontsize=label_size)
+    plt.xlabel(r'$\mathrm{\Delta\omega\ (\degree)}$', fontsize=label_size)
+    plt.ylabel(r'$\mathrm{2\theta/\omega\ (\degree)}$', fontsize=label_size)
     plt.title(title, fontsize=label_size)
 
     # Configure axis ticks and limits
@@ -227,6 +230,12 @@ def reciprocal_space_map(filename, verbose=False, threshold=10,
     ax.yaxis.set_major_locator(ticker.MaxNLocator(nbins=5))
     ax.tick_params(axis='both', which='major', labelsize=label_size)
     ax.tick_params(axis='both', which='minor', labelsize=label_size - 2)
+
+    # Thicken only x and y-axis lines and remove the rest of the border
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_linewidth(2)
+    ax.spines['bottom'].set_linewidth(2)
 
     plt.xlim(xlim if xlim else extent[0], extent[1])
     plt.ylim(ylim if ylim else (df.index.min(), df.index.max()))
